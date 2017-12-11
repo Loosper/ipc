@@ -34,15 +34,17 @@ int main() {
     seed = tmp;
 
     while (1) {
-        if (index == mem->index) {
+        if (index >= mem->index) {
             usleep(1);
             continue;
         }
 
+        sleep(100);
+
         // how does it know it's been overtakn
 
         // discards volatile
-        new_seed = verify((void *)(mem->data + index));
+        new_seed = verify((void *)(mem->data + index % LEN));
 
         if (seed != new_seed) {
             printf("Wrong seed\n");
@@ -51,7 +53,8 @@ int main() {
         }
 
         seed += 1;
-        index = (index + 1) % LEN;
+        ++index;
+        // index = (index + 1) % LEN;
     }
 
 }
