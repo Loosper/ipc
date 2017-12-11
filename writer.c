@@ -51,8 +51,8 @@ int main() {
     while (1) {
         // this ensures that data is not read before it's written
         generate((void *)(mem->data + mem->index % LEN), seed);
-        // in theory nothing willbe written before the index is calculated
-        ++mem->index; // = (mem->index + 1) ;
+        // in theory nothing will be written before the index is calculated
+        ++mem->index; // = (mem->index + 1) % LEN;
         ++seed;
         printf("%d\n", seed);
         // sleep(1);

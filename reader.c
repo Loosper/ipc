@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <sys/types.h>
 
 #include "gen.h"
 #include "lib.h"
@@ -12,7 +13,7 @@
 
 int main() {
     int shm_fd;
-    int index = 0;
+    uint64_t index;
     struct buffer *mem;
     uint32_t seed;
     uint32_t new_seed;
@@ -29,19 +30,19 @@ int main() {
     );
 
     // ensure it doesn't fail
+    index = mem->index;
     while (tmp == -1)
-        tmp = verify((void *)(mem->data + index));
+        tmp = verify((void *)(mem->data + index % LEN));
     seed = tmp;
 
     while (1) {
+        if (index / LEN < mem->index % LEN) {
+            printf("overtaken\n");
+        }
         if (index >= mem->index) {
             usleep(1);
             continue;
         }
-
-        sleep(100);
-
-        // how does it know it's been overtakn
 
         // discards volatile
         new_seed = verify((void *)(mem->data + index % LEN));
@@ -53,7 +54,7 @@ int main() {
         }
 
         seed += 1;
-        ++index;
+        index += 1;
         // index = (index + 1) % LEN;
     }
 
